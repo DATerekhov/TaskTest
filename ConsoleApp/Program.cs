@@ -28,17 +28,23 @@ namespace ConsoleApp
                 "https://channel9.msdn.com/Shows/Visual-Studio-Toolbox/Functional-Programming-in-CSharp"
             };
 
-            var res = new List<int>();
+            //firstMethod
+            //var res = new List<int>();
+            //Task.WaitAll(sites.Select(x =>
+            //{
+            //    return Task.Run(() =>
+            //    {
+            //        var r = GetSiteResponseLength(x);
+            //        res.Add(r);
+            //    });
+            //}).ToArray());
+            //foreach (var item in res)
+            //{
+            //    Console.WriteLine(item.ToString());
+            //}
 
-            Task.WaitAll(sites.Select(x =>
-            {
-                return Task.Run(() =>
-                {
-                    var r = GetSiteResponseLength(x);
-                    res.Add(r);
-                });
-            }).ToArray());
-
+            //secondMethod
+            var res = GetSiteResponseLengthAsync(sites).Result;
             foreach (var item in res)
             {
                 Console.WriteLine(item.ToString());
@@ -57,6 +63,18 @@ namespace ConsoleApp
             var strSiteResponse = reader.ReadToEnd();
 
             return strSiteResponse.Length;
+        }
+
+        private static async Task<int[]> GetSiteResponseLengthAsync(List<string> sites)
+        {
+            var tasks = new List<Task<int>>();
+
+            foreach (var site in sites)
+            {
+                tasks.Add(Task.Run(() => GetSiteResponseLength(site)));
+            }
+
+            return await Task.WhenAll(tasks);
         }
     }
 }
