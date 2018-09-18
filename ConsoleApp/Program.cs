@@ -35,20 +35,12 @@ namespace ConsoleApp
             //    return Task.Run(() =>
             //    {
             //        var r = GetSiteResponseLength(x);
-            //        res.Add(r);
+            //        //res.Add(r);
             //    });
             //}).ToArray());
-            //foreach (var item in res)
-            //{
-            //    Console.WriteLine(item.ToString());
-            //}
 
             //secondMethod
             var res = GetSiteResponseLengthAsync(sites).Result;
-            foreach (var item in res)
-            {
-                Console.WriteLine(item.ToString());
-            }
 
             Console.WriteLine("Time: " + watch.ElapsedMilliseconds);
             Console.ReadKey();
@@ -60,9 +52,13 @@ namespace ConsoleApp
             var response = request.GetResponse();
             var stream = response.GetResponseStream();
             var reader = new StreamReader(stream);
-            var strSiteResponse = reader.ReadToEnd();
+            var respLength = reader.ReadToEnd().Length;
 
-            return strSiteResponse.Length;
+            response.Close();
+            stream.Close();
+            reader.Close();
+
+            return respLength;
         }
 
         private static async Task<int[]> GetSiteResponseLengthAsync(List<string> sites)
